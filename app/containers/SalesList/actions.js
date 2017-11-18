@@ -22,27 +22,26 @@ export const RECEIVE_SALES = 'RECEIVE_SALES';
 function requestSales() {
   return {
     type: REQUEST_SALES,
-  }
+  };
 }
 
 function receiveSales(json) {
   return {
     type: RECEIVE_SALES,
     sales: json.sales,
-  }
+  };
 }
 
 function fetchSales() {
-  return dispatch => {
-    dispatch(requestSales())
-    return fetch("https://localhost:8443/flashsales/v1/sales")
-      .then(response => response.json())
-      .then(json => dispatch(receiveSales(json)));
-  }
+  return (dispatch) => {
+    dispatch(requestSales());
+
+    return fetch('https://localhost:8443/flashsales/v1/sale')
+      .then((response) => response.json())
+      .then((json) => dispatch(receiveSales(json)));
+  };
 }
 
 export function fetchSalesIfNeeded() {
-  return (dispatch, getState) => {
-    return dispatch(fetchSales());
-  }
+  return (dispatch) => dispatch(fetchSales());
 }
