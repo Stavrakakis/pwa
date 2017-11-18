@@ -15,6 +15,8 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import createHistory from 'history/createBrowserHistory';
 import 'sanitize.css/sanitize.css';
+import 'babel-polyfill';
+import thunkMiddleware from 'redux-thunk';
 
 // Import root app
 import App from 'containers/App';
