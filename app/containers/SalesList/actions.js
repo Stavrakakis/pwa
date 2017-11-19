@@ -32,13 +32,28 @@ function receiveSales(json) {
   };
 }
 
+function getFromCache(key, getter) {
+  if (localStorage.getItem(key) !== null) {
+    return new Promise((resolve) => resolve(JSON.parse(localStorage.getItem(key))));
+  }
+
+  return getter()
+    .then((data) => {
+      localStorage.setItem(key, JSON.stringify(data));
+      return data;
+    });
+}
+
+function getSales() {
+  return fetch('https://localhost:8443/flashsales/v1/sales')
+    .then((response) => response.json());
+}
 function fetchSales() {
   return (dispatch) => {
     dispatch(requestSales());
 
-    return fetch('https://localhost:8443/flashsales/v1/sale')
-      .then((response) => response.json())
-      .then((json) => dispatch(receiveSales(json)));
+    return getFromCache('sales', () => getSales())
+      .then((sales) => dispatch(receiveSales(sales)));
   };
 }
 

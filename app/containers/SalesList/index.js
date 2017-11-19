@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FormattedMessage } from 'react-intl';
 import { compose } from 'redux';
 import injectReducer from 'utils/injectReducer';
 
 import { fetchSalesIfNeeded } from './actions';
 import reducer from './reducer';
-import messages from './messages';
+
+import { Card, CardActions, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
+import Paper from 'material-ui/Paper';
 
 export class SalesList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
 
@@ -17,15 +19,43 @@ export class SalesList extends React.PureComponent { // eslint-disable-line reac
   }
 
   render() {
+    const style = {
+      margin: 20,
+      width: 600,
+      display: 'flex',
+    };
+
     const loading = this.props.isFetching ? <div>Loading...</div> : '';
+    
+    const saleList = this.props.sales.map((sale) =>
+      <Paper key={sale.id} style={style} zDepth={1} >
+        <Card>
+          <CardMedia>
+            <img src={sale.mainPhoto.url} alt="" />
+          </CardMedia>
+          <CardTitle title={sale.title} subtitle={sale.slug} />
+          <CardText>
+            {sale.description}
+          </CardText>
+          <CardActions>
+            <FlatButton label="Favourite" />
+            <FlatButton label="Book" />
+          </CardActions>
+        </Card>
+      </Paper>
+    );
 
-    const saleList = this.props.sales.map((sale) => <div><div>{sale.title}</div><img alt={sale.slug} src={sale.mainPhoto.url}></img></div>);
-
+    const containerStyles = {
+      display: 'flex',
+      'flex-wrap': 'wrap',
+      'margin-top': 70
+    };
     return (
       <div>
-        <FormattedMessage {...messages.header} />
         {loading}
-        {saleList}
+        <div style={containerStyles}>
+          {saleList}
+        </div>
       </div>
     );
   }

@@ -14,14 +14,43 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
+import AppBar from 'material-ui/AppBar';
+import Drawer from 'material-ui/Drawer';
+import MenuItem from 'material-ui/MenuItem';
+
 import SalesList from 'containers/SalesList/Loadable';
 
-export default function App() {
-  return (
-    <div>
-      <Switch>
-        <Route exact path="/" component={SalesList} />
-      </Switch>
-    </div>
-  );
+export default class App extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+
+  constructor(props) {
+    super(props);
+    this.state = { open: false };
+  }
+
+  handleToggle = () => this.setState({ open: !this.state.open });
+
+  render() {
+    const appBarStyle = {
+      position: 'fixed',
+      top: '0',
+    };
+
+    return (
+      <div>
+        <AppBar
+          title="Secret Escapes"
+          style={appBarStyle}
+          onClick={this.handleToggle}
+          iconClassNameRight="muidocs-icon-navigation-expand-more"
+        />
+        <Drawer open={this.state.open}>
+          <MenuItem>Menu Item</MenuItem>
+          <MenuItem>Menu Item 2</MenuItem>
+        </Drawer>
+        <Switch>
+          <Route exact path="/" component={SalesList} />
+        </Switch>
+      </div>
+    );
+  }
 }

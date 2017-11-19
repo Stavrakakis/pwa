@@ -38,12 +38,14 @@ import 'file-loader?name=[name].[ext]!./.htaccess';
 /* eslint-enable import/no-unresolved, import/extensions */
 
 import configureStore from './configureStore';
-
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 // Import i18n messages
 import { translationMessages } from './i18n';
 
 // Import CSS reset and Global Styles
 import './global-styles';
+
+import fire from './fire';
 
 // Create redux store with history
 const initialState = {};
@@ -51,15 +53,18 @@ const history = createHistory();
 const store = configureStore(initialState, history);
 const MOUNT_NODE = document.getElementById('app');
 
+import AppBar from 'material-ui/AppBar';
 const render = (messages) => {
   ReactDOM.render(
-    <Provider store={store}>
-      <LanguageProvider messages={messages}>
-        <ConnectedRouter history={history}>
-          <App />
-        </ConnectedRouter>
-      </LanguageProvider>
-    </Provider>,
+    <MuiThemeProvider>
+      <Provider store={store}>
+        <LanguageProvider messages={messages}>
+          <ConnectedRouter history={history}>
+            <App />
+          </ConnectedRouter>
+        </LanguageProvider>
+      </Provider>
+    </MuiThemeProvider>,
     MOUNT_NODE
   );
 };
