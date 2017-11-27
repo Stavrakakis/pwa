@@ -10,11 +10,13 @@ import reducer from './reducer';
 import { Card, CardActions, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
+import CircularProgress from 'material-ui/CircularProgress';
 
 export class SalesList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
 
   componentDidMount() {
     const { dispatch } = this.props;
+
     dispatch(fetchSalesIfNeeded());
   }
 
@@ -25,8 +27,15 @@ export class SalesList extends React.PureComponent { // eslint-disable-line reac
       display: 'flex',
     };
 
-    const loading = this.props.isFetching ? <div>Loading...</div> : '';
-    
+    const progressStyle = {
+      top: 300,
+      margin: 'auto',
+      position: 'relative',
+      width: 50,
+    };
+
+    const loading = this.props.isFetching ? <div style={progressStyle}><CircularProgress /></div> : '';
+
     const saleList = this.props.sales.map((sale) =>
       <Paper key={sale.id} style={style} zDepth={1} >
         <Card>
@@ -47,8 +56,8 @@ export class SalesList extends React.PureComponent { // eslint-disable-line reac
 
     const containerStyles = {
       display: 'flex',
-      'flex-wrap': 'wrap',
-      'margin-top': 70
+      flexWrap: 'wrap',
+      marginTop: 70,
     };
     return (
       <div>
@@ -69,6 +78,7 @@ SalesList.propTypes = {
 
 const mapStateToProps = (state) => {
   const s = state.toJS().saleslist;
+  console.log(s);
   return { isFetching: s.isFetching, sales: s.sales || [] };
 };
 

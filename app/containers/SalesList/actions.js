@@ -45,15 +45,44 @@ function getFromCache(key, getter) {
 }
 
 function getSales() {
-  return fetch('https://localhost:8443/flashsales/v1/sales')
-    .then((response) => response.json());
+  let networkDataReceived = false;
+
+
+
+  return caches.match('https://9ullis5n3g.execute-api.us-east-1.amazonaws.com/dev/sales').then(function (response) {
+    if (!response) throw Error("No data");
+    return response.json();
+  });
 }
+
 function fetchSales() {
   return (dispatch) => {
+
     dispatch(requestSales());
 
-    return getFromCache('sales', () => getSales())
-      .then((sales) => dispatch(receiveSales(sales)));
+    let networkDataReceived = false;
+
+    var networkUpdate = fetch('https://9ullis5n3g.execute-api.us-east-1.amazonaws.com/dev/sales').then(function (response) {
+      return response.json();
+    }).then(function (sales) {
+      networkDataReceived = true;
+      dispatch(receiveSales(sales));
+    });
+
+    // fetch cached data
+    return caches.match('https://9ullis5n3g.execute-api.us-east-1.amazonaws.com/dev/sales').then(function (response) {
+      return response.json();
+    }).then(function (sales) {
+      // don't overwrite newer network data
+      if (!networkDataReceived) {
+        dispatch(receiveSales(sales));
+      }
+    }).catch(function () {
+      // we didn't get cached data, the network is our last hope:
+      return networkUpdate;
+    })
+
+    //return getSales().then((sales) => dispatch(receiveSales(sales)));
   };
 }
 

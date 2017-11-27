@@ -16,7 +16,7 @@ function reducer(state = initialState, action) {
       return state.set('isFetching', true);
     case RECEIVE_SALES:
       return state.set('isFetching', false)
-                  .set('sales', action.sales);
+        .set('sales', action.sales);
     default:
       return state;
   }

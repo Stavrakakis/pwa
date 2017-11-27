@@ -1,0 +1,16 @@
+
+
+service: aws-nodejs # NOTE: update this with your service name
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  profile: serverless
+functions:
+  hello:
+    handler: handler.getSales
+    events:
+      - http:
+          path: sales
+          method: get
+          cors: true
