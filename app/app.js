@@ -39,6 +39,7 @@ import 'file-loader?name=[name].[ext]!./.htaccess';
 
 import configureStore from './configureStore';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 // Import i18n messages
 import { translationMessages } from './i18n';
 
@@ -54,13 +55,14 @@ const store = configureStore(initialState, history);
 const MOUNT_NODE = document.getElementById('app');
 
 import AppBar from 'material-ui/AppBar';
+
 const render = (messages) => {
   ReactDOM.render(
     <MuiThemeProvider>
       <Provider store={store}>
         <LanguageProvider messages={messages}>
           <ConnectedRouter history={history}>
-            <App />
+            <App dispatch={store.dispatch} />
           </ConnectedRouter>
         </LanguageProvider>
       </Provider>

@@ -11,6 +11,10 @@ import { Card, CardActions, CardMedia, CardTitle, CardText } from 'material-ui/C
 import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
+import { push } from 'react-router-redux';
+import { withRouter } from 'react-router-dom';
+
+import SaleCard from '../../components/SaleCard/index'
 
 export class SalesList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
 
@@ -20,12 +24,11 @@ export class SalesList extends React.PureComponent { // eslint-disable-line reac
     dispatch(fetchSalesIfNeeded());
   }
 
+  handleClick = () => {
+    this.props.dispatch(push('/sale/'));
+  }
+
   render() {
-    const style = {
-      margin: 20,
-      width: 600,
-      display: 'flex',
-    };
 
     const progressStyle = {
       top: 300,
@@ -37,21 +40,7 @@ export class SalesList extends React.PureComponent { // eslint-disable-line reac
     const loading = this.props.isFetching ? <div style={progressStyle}><CircularProgress /></div> : '';
 
     const saleList = this.props.sales.map((sale) =>
-      <Paper key={sale.id} style={style} zDepth={1} >
-        <Card>
-          <CardMedia>
-            <img src={sale.mainPhoto.url} alt="" />
-          </CardMedia>
-          <CardTitle title={sale.title} subtitle={sale.slug} />
-          <CardText>
-            {sale.description}
-          </CardText>
-          <CardActions>
-            <FlatButton label="Favourite" />
-            <FlatButton label="Book" />
-          </CardActions>
-        </Card>
-      </Paper>
+      <SaleCard key={sale.id} sale={sale} dispatch={this.props.dispatch} />
     );
 
     const containerStyles = {
@@ -59,6 +48,7 @@ export class SalesList extends React.PureComponent { // eslint-disable-line reac
       flexWrap: 'wrap',
       marginTop: 70,
     };
+
     return (
       <div>
         {loading}
@@ -78,7 +68,6 @@ SalesList.propTypes = {
 
 const mapStateToProps = (state) => {
   const s = state.toJS().saleslist;
-  console.log(s);
   return { isFetching: s.isFetching, sales: s.sales || [] };
 };
 
@@ -94,5 +83,6 @@ const withReducer = injectReducer({ key: 'saleslist', reducer });
 
 export default compose(
   withReducer,
+  withRouter,
   withConnect,
 )(SalesList);

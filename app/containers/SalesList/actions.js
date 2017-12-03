@@ -18,6 +18,7 @@ export function defaultAction() {
 }
 export const REQUEST_SALES = 'REQUEST_SALES';
 export const RECEIVE_SALES = 'RECEIVE_SALES';
+export const SALE_LOADED = 'SALE_LOADED';
 
 function requestSales() {
   return {
@@ -29,6 +30,13 @@ function receiveSales(json) {
   return {
     type: RECEIVE_SALES,
     sales: json.sales,
+  };
+}
+
+function saleLoaded(sale) {
+  return {
+    type: SALE_LOADED,
+    selectedSale: sale,
   };
 }
 
@@ -47,12 +55,20 @@ function getFromCache(key, getter) {
 function getSales() {
   let networkDataReceived = false;
 
-
-
   return caches.match('https://9ullis5n3g.execute-api.us-east-1.amazonaws.com/dev/sales').then(function (response) {
     if (!response) throw Error("No data");
     return response.json();
   });
+}
+
+function fetchSale(id) {
+  return (dispatch) => {
+    const sales = localStorage.getItem('sales');
+    const saleList = JSON.parse(sales);
+    const sale = saleList.sales.find((s) => s.id == id);
+
+    dispatch(saleLoaded(sale));
+  };
 }
 
 function fetchSales() {
@@ -66,6 +82,7 @@ function fetchSales() {
       return response.json();
     }).then(function (sales) {
       networkDataReceived = true;
+      localStorage.setItem('sales', JSON.stringify(sales));
       dispatch(receiveSales(sales));
     });
 
@@ -80,12 +97,14 @@ function fetchSales() {
     }).catch(function () {
       // we didn't get cached data, the network is our last hope:
       return networkUpdate;
-    })
-
-    //return getSales().then((sales) => dispatch(receiveSales(sales)));
+    });
   };
 }
 
 export function fetchSalesIfNeeded() {
   return (dispatch) => dispatch(fetchSales());
+}
+
+export function fetchSaleData(id) {
+  return (dispatch) => dispatch(fetchSale(id));
 }
